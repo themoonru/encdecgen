@@ -9,6 +9,7 @@ type MsgpackEncDecTemplateData struct {
 }
 
 type Field struct {
+	ConvType    string
 	MsgPackType string
 	Name        string
 	Index       int64

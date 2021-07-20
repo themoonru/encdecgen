@@ -15,7 +15,7 @@ type Pswd struct {
 
 const (
 	CONST   = 1
-	CONST_1 = "не нужный код"
+	CONST_1 = "ненужный код"
 )
 
 func main() {

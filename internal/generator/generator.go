@@ -31,6 +31,7 @@ func (g *Generator) Generate(data []*template.MsgpackEncDecTemplateData) (string
 package ` + data[0].Package + `
 
 import (
+	"fmt"
 	"gopkg.in/vmihailenco/msgpack.v2"
 )
 `

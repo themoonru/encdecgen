@@ -10,7 +10,7 @@ import (
 
 func main() {
 	parser := ast_parser.New()
-	data, err := parser.ParseFile("struct.go")
+	data, err := parser.ParseFile("internal/generator/fixtures/06_struct.go")
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -23,7 +23,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	f, err := os.Create("struct_enc.go")
+	f, err := os.Create("internal/generator/fixtures/06_struct_enc_exp.go")
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)

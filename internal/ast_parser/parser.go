@@ -11,7 +11,26 @@ import (
 	"strings"
 )
 
-const TagName = "msgpack_tnt_index"
+const TagName = "msgpack_index"
+
+var typeEncoders = map[string]string{
+	"int":          "Int",
+	"int8":         "Int8",
+	"int16":        "Int16",
+	"int32":        "Int32",
+	"int64":        "Int64",
+	"uint":         "Uint",
+	"uint8":        "Uint8",
+	"uint16":       "Uint16",
+	"uint32":       "Uint32",
+	"uint64":       "Uint64",
+	"float32":      "Float32",
+	"float64":      "Float64",
+	"bool":         "Bool",
+	"string":       "String",
+	"CustomInt":    "Int",
+	"CustomString": "String",
+}
 
 type AstParser struct {
 }
@@ -43,14 +62,32 @@ func (a *AstParser) ParseFile(filename string) ([]*template.MsgpackEncDecTemplat
 							}
 
 							for _, field := range t.Fields.List {
-								templateData.Fields = append(
-									templateData.Fields,
-									template.Field{
-										MsgPackType: strings.Title(field.Type.(*ast.Ident).Name),
-										Name:        field.Names[0].Name,
-										Index:       a.getMbIndex(field.Tag.Value),
-									},
-								)
+
+								var fieldType string
+								switch field.Type.(type) {
+								case *ast.Ident:
+									fieldType = field.Type.(*ast.Ident).Name
+
+									templateData.Fields = append(
+										templateData.Fields,
+										template.Field{
+											ConvType:    strings.ToLower(typeEncoders[fieldType]),
+											MsgPackType: typeEncoders[fieldType],
+											Name:        field.Names[0].Name,
+											Index:       a.getMbIndex(field.Tag.Value),
+										},
+									)
+								default:
+									templateData.Fields = append(
+										templateData.Fields,
+										template.Field{
+											ConvType:    "",
+											MsgPackType: "",
+											Name:        field.Names[0].Name,
+											Index:       a.getMbIndex(field.Tag.Value),
+										},
+									)
+								}
 							}
 							res = append(res, templateData)
 						}

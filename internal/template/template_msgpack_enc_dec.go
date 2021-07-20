@@ -3,11 +3,12 @@ package template
 const MsgpackEncDecTmpl = `
 func ({{ .StructNameFirstLetter }} *{{ .StructName }}) EncodeMsgpack(e *msgpack.Encoder) error {
 	if err := e.EncodeArrayLen({{ .FieldsCount }}); err != nil {
-		return err
+		return fmt.Errorf("error encode struct {{ .StructName }} to MsgPack: %w", err)
 	}
 	{{range .Fields }}
-	if err := e.Encode{{ .MsgPackType }}({{ $.StructNameFirstLetter }}.{{ .Name }}); err != nil { // {{ .Index }}
-		return err
+	{{ if .ConvType }}if err := e.Encode{{ .MsgPackType }}({{ .ConvType }}({{ $.StructNameFirstLetter }}.{{ .Name }})); err != nil { // {{ .Index }}
+		{{else}}if err := e.Encode{{ .MsgPackType }}({{ $.StructNameFirstLetter }}.{{ .Name }}); err != nil { // {{ .Index }}
+		{{end}}return fmt.Errorf("error encode field {{ $.StructNameFirstLetter }}.{{ .Name }} to MsgPack: %w", err)
 	}
 	{{end}}
 	return nil
